@@ -1,0 +1,51 @@
+version: '3'
+
+services:
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+
+    expose:
+      - 4000
+
+    environment:
+      # - MONGO_URI=mongodb://db:27017/db
+      - PORT=4000
+      # - JWT_SECRET=secretsecret
+      # - JWT_EXPIRY=30d
+      # - DEBUG=worker:*
+      # - MORGAN=combined
+      # - NODE_ENV=development
+    ports:
+      - 4000:4000
+    volumes:
+      - ./client:/client/
+      - /app/server/node_modules
+      - type: bind
+        source: ./server
+        target: /app/server
+
+    command: npm run server
+    restart: always
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    environment:
+      CHOKIDAR_USEPOLLING: 'true'
+    expose:
+      - 3000
+    ports:
+      - 3000:3000
+    volumes:
+      - ./client:/client/
+      - /client/node_modules
+      - type: bind
+        source: ./client
+        target: /app/client
+    links:
+      - server
+    command: npm start
+    restart: always
