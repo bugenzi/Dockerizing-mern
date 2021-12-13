@@ -41,7 +41,7 @@ services:
       - 3000:3000
     volumes:
       - ./client:/client/
-      - /client/node_modules
+      - /app/client/node_modules
       - type: bind
         source: ./client
         target: /app/client
